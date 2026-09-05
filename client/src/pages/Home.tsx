@@ -5,9 +5,12 @@ const discordUrl = "https://discord.gg/kFtu8GSTAe";
 const instagramUrl = "https://www.instagram.com/msecteam/";
 
 const players = [
-  { tag: "AERON", role: "CAPTAIN", number: "01", accent: "#b9d79d" },
-  { tag: "KEVIN", role: "DUELIST", number: "07", accent: "#e6d9b7" },
-  { tag: "BARRXS", role: "SUPPORT", number: "13", accent: "#90b67c" },
+  { tag: "ROBSON", role: "PLAYER", number: "01", accent: "#b9d79d" },
+  { tag: "KEVIN", role: "PLAYER", number: "02", accent: "#e6d9b7" },
+  { tag: "YURI", role: "PLAYER", number: "03", accent: "#90b67c" },
+  { tag: "GOTARDO", role: "PLAYER", number: "04", accent: "#c8d6a8" },
+  { tag: "NATAN", role: "PLAYER", number: "05", accent: "#d9cba8" },
+  { tag: "T2T", role: "PLAYER", number: "06", accent: "#a8c68e" },
 ];
 
 const matches = [
