@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowUpRight, ChevronRight, Disc3, Instagram, Menu, Play, Trophy, Users, X } from "lucide-react";
 import { useSiteContent } from "@/lib/siteContent";
 
@@ -17,11 +17,19 @@ function WolfMark({ small = false }: { small?: boolean }) {
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const content = useSiteContent();
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 24);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <main className="site-shell">
-      <nav className="topbar">
+      <nav className={scrolled ? "topbar topbar-scrolled" : "topbar"}>
         <a className="brand" href="#top" aria-label="MSEC Team início">
           <WolfMark small />
           <span>MSEC <em>TEAM</em></span>
@@ -30,6 +38,7 @@ export default function Home() {
           <a href="#sobre" onClick={() => setMenuOpen(false)}>Sobre</a>
           <a href="#lineup" onClick={() => setMenuOpen(false)}>Line-up</a>
           <a href="#agenda" onClick={() => setMenuOpen(false)}>Agenda</a>
+          <a href="#noticias" onClick={() => setMenuOpen(false)}>Notícias</a>
           <a href="#comunidade" onClick={() => setMenuOpen(false)}>Comunidade</a>
           <a className="mobile-discord" href={discordUrl} target="_blank" rel="noreferrer">Entrar no Discord <ArrowUpRight size={15} /></a>
         </div>
@@ -100,7 +109,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="footer"><div className="brand footer-brand"><WolfMark small /><span>MSEC <em>TEAM</em></span></div><p>© 2026 MSEC TEAM. Feito no Brasil, jogado em qualquer lugar.</p><div className="footer-links"><a href={instagramUrl} target="_blank" rel="noreferrer"><Instagram size={16} /> Instagram</a><a href={discordUrl} target="_blank" rel="noreferrer"><Disc3 size={16} /> Discord</a></div></footer>
+      <footer className="footer"><div className="brand footer-brand"><WolfMark small /><span>MSEC <em>TEAM</em></span></div><p>© 2026 MSEC TEAM. Feito no Brasil, jogado em qualquer lugar.</p><div className="footer-links"><a href={instagramUrl} target="_blank" rel="noreferrer"><Instagram size={16} /> Instagram</a><a href={discordUrl} target="_blank" rel="noreferrer"><Disc3 size={16} /> Discord</a><a href="/master"><span className="footer-master-dot" /> Área Master</a></div></footer>
     </main>
   );
 }
