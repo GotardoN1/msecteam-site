@@ -1,23 +1,9 @@
 import { useState } from "react";
 import { ArrowUpRight, ChevronRight, Disc3, Instagram, Menu, Play, Trophy, Users, X } from "lucide-react";
+import { useSiteContent } from "@/lib/siteContent";
 
 const discordUrl = "https://discord.gg/kFtu8GSTAe";
 const instagramUrl = "https://www.instagram.com/msecteam/";
-
-const players = [
-  { tag: "ROBSON", role: "PLAYER", number: "01", accent: "#b9d79d" },
-  { tag: "KEVIN", role: "PLAYER", number: "02", accent: "#e6d9b7" },
-  { tag: "YURI", role: "PLAYER", number: "03", accent: "#90b67c" },
-  { tag: "GOTARDO", role: "PLAYER", number: "04", accent: "#c8d6a8" },
-  { tag: "NATAN", role: "PLAYER", number: "05", accent: "#d9cba8" },
-  { tag: "T2T", role: "PLAYER", number: "06", accent: "#a8c68e" },
-];
-
-const matches = [
-  { date: "18", month: "SET", opponent: "Wolves United", game: "EA FC 26", status: "PRÓXIMO", score: "20:30" },
-  { date: "24", month: "SET", opponent: "Nox Academy", game: "Valorant", status: "SCRIM", score: "21:00" },
-  { date: "02", month: "OUT", opponent: "A definir", game: "Rocket League", status: "EM BREVE", score: "—" },
-];
 
 function WolfMark({ small = false }: { small?: boolean }) {
   return (
@@ -31,6 +17,7 @@ function WolfMark({ small = false }: { small?: boolean }) {
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const content = useSiteContent();
 
   return (
     <main className="site-shell">
@@ -55,8 +42,8 @@ export default function Home() {
         <div className="hero-grid" />
         <div className="hero-content">
           <p className="eyebrow"><span className="live-dot" /> ORGANIZAÇÃO BRASILEIRA DE ESPORTS</p>
-          <h1>Joga mal.<br /><span>Compete muito.</span></h1>
-          <p className="hero-copy">A casa dos piores jogadores e das melhores histórias. MSEC TEAM é comunidade, caos e competição do nosso jeito.</p>
+          <h1>{content.heroTitle}<br /><span>{content.heroAccent}</span></h1>
+          <p className="hero-copy">{content.heroCopy}</p>
           <div className="hero-actions">
             <a className="button button-primary" href="#lineup">Conheça a matilha <ChevronRight size={17} /></a>
             <a className="button button-ghost" href={instagramUrl} target="_blank" rel="noreferrer"><Instagram size={17} /> Ver no Instagram</a>
@@ -69,10 +56,10 @@ export default function Home() {
       <section id="sobre" className="manifesto section-pad">
         <div className="section-kicker">01 / A MATILHA</div>
         <div className="manifesto-layout">
-          <h2>Sem pose.<br /><span>Só presença.</span></h2>
+          <h2>{content.manifestoTitle}<br /><span>{content.manifestoAccent}</span></h2>
           <div className="manifesto-copy">
-            <p className="lead">Não somos a organização mais séria da sala — e é exatamente por isso que você vai lembrar da gente.</p>
-            <p>Da resenha no Discord ao último round da partida, a MSEC existe para quem joga pelo jogo. Uma comunidade brasileira, competitiva quando precisa e caótica por natureza.</p>
+            <p className="lead">{content.manifestoLead}</p>
+            <p>{content.manifestoBody}</p>
             <a className="text-link" href={discordUrl} target="_blank" rel="noreferrer">Faça parte da matilha <ArrowUpRight size={16} /></a>
           </div>
         </div>
@@ -87,7 +74,7 @@ export default function Home() {
       <section id="lineup" className="lineup section-pad">
         <div className="section-heading"><div><div className="section-kicker">02 / ROSTER</div><h2>A matilha<br /><span>em campo.</span></h2></div><a className="text-link" href={instagramUrl} target="_blank" rel="noreferrer">Ver todos <ArrowUpRight size={16} /></a></div>
         <div className="players-grid">
-          {players.map((player, index) => <article className="player-card" key={player.tag} style={{ "--accent": player.accent } as React.CSSProperties}>
+          {content.players.map((player, index) => <article className="player-card" key={`${player.tag}-${index}`} style={{ "--accent": player.accent } as React.CSSProperties}>
             <div className={`player-photo photo-${index + 1}`}><div className="photo-number">{player.number}</div><div className="photo-glow" /></div>
             <div className="player-info"><div><span className="player-role">{player.role}</span><h3>{player.tag}</h3></div><ArrowUpRight size={18} /></div>
           </article>)}
@@ -97,13 +84,18 @@ export default function Home() {
       <section id="agenda" className="schedule section-pad">
         <div className="section-heading"><div><div className="section-kicker">03 / CALENDÁRIO</div><h2>Próximos<br /><span>confrontos.</span></h2></div><div className="season-pill"><span className="live-dot" /> TEMPORADA 2026</div></div>
         <div className="matches-list">
-          {matches.map((match, index) => <div className="match-row" key={`${match.date}-${match.opponent}`}><div className="match-date"><strong>{match.date}</strong><span>{match.month}</span></div><div className="match-game"><span>{match.game}</span><strong>MSEC TEAM <i>vs</i> {match.opponent}</strong></div><div className="match-status"><span>{match.status}</span><strong>{match.score}</strong></div><div className="match-arrow"><ArrowUpRight size={18} /></div></div>)}
+          {content.matches.map((match, index) => <div className="match-row" key={`${match.date}-${match.opponent}-${index}`}><div className="match-date"><strong>{match.date}</strong><span>{match.month}</span></div><div className="match-game"><span>{match.game}</span><strong>MSEC TEAM <i>vs</i> {match.opponent}</strong></div><div className="match-status"><span>{match.status}</span><strong>{match.score}</strong></div><div className="match-arrow"><ArrowUpRight size={18} /></div></div>)}
         </div>
+      </section>
+
+      <section id="noticias" className="news section-pad">
+        <div className="section-heading"><div><div className="section-kicker">04 / NOTÍCIAS</div><h2>Do front<br /><span>da matilha.</span></h2></div><a className="text-link" href="/master">Editar notícias <ArrowUpRight size={16} /></a></div>
+        <div className="news-grid">{content.news.map((item, index) => <article className={item.featured ? "news-card news-card-featured" : "news-card"} key={`${item.title}-${index}`}><div className="news-art"><span>{item.category}</span><strong>0{index + 1}</strong></div><div className="news-meta"><span>{item.date}</span><ArrowUpRight size={16} /></div><h3>{item.title}</h3><p>{item.excerpt}</p></article>)}</div>
       </section>
 
       <section id="comunidade" className="community section-pad">
         <div className="community-panel">
-          <div className="community-text"><div className="section-kicker">04 / COMUNIDADE</div><h2>Entra no<br /><span>canil.</span></h2><p>Partidas, memes, calls duvidosas e aquela resenha que só quem é da matilha entende.</p><a className="button button-light" href={discordUrl} target="_blank" rel="noreferrer"><Disc3 size={17} /> Entrar no Discord <ArrowUpRight size={15} /></a></div>
+          <div className="community-text"><div className="section-kicker">04 / COMUNIDADE</div><h2>{content.communityTitle}<br /><span>{content.communityAccent}</span></h2><p>{content.communityBody}</p><a className="button button-light" href={discordUrl} target="_blank" rel="noreferrer"><Disc3 size={17} /> Entrar no Discord <ArrowUpRight size={15} /></a></div>
           <div className="community-orbit"><div className="orbit-ring orbit-ring-one" /><div className="orbit-ring orbit-ring-two" /><WolfMark /><span className="orbit-label">MSEC<br />TEAM</span></div>
         </div>
       </section>
