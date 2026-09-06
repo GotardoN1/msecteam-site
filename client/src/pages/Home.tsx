@@ -4,15 +4,10 @@ import { useSiteContent } from "@/lib/siteContent";
 
 const discordUrl = "https://discord.gg/kFtu8GSTAe";
 const instagramUrl = "https://www.instagram.com/msecteam/";
+const logoUrl = "/manus-storage/pasted_file_3ZhlSm_image_9d5c5ac6.png";
 
 function WolfMark({ small = false }: { small?: boolean }) {
-  return (
-    <div className={small ? "wolf-mark wolf-mark-small" : "wolf-mark"} aria-label="MSEC TEAM">
-      <span className="wolf-ear wolf-ear-left" />
-      <span className="wolf-ear wolf-ear-right" />
-      <span className="wolf-face"><span className="wolf-eye wolf-eye-left" /><span className="wolf-eye wolf-eye-right" /></span>
-    </div>
-  );
+  return <img className={small ? "official-logo official-logo-small" : "official-logo"} src={logoUrl} alt="MSEC — Me Sinto em Casa Esports" />;
 }
 
 export default function Home() {
