@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Check, ClipboardList, FileText, RotateCcw, Save, Users } from "lucide-react";
+import { ArrowLeft, Check, ClipboardList, FileText, Play, RotateCcw, Save, Users } from "lucide-react";
 import { Link } from "wouter";
 import { defaultSiteContent, loadSiteContent, resetSiteContent, saveSiteContent, type SiteContent } from "@/lib/siteContent";
 
@@ -7,7 +7,10 @@ const tabs = [
   { id: "conteudo", label: "Conteúdo", icon: FileText },
   { id: "equipe", label: "Equipe", icon: Users },
   { id: "agenda", label: "Agenda", icon: ClipboardList },
+  { id: "resultados", label: "Resultados", icon: ClipboardList },
   { id: "noticias", label: "Notícias", icon: FileText },
+  { id: "ao-vivo", label: "Ao vivo", icon: Play },
+  { id: "parceiros", label: "Parceiros", icon: Users },
 ];
 
 export default function Master() {
@@ -33,7 +36,10 @@ export default function Master() {
       {activeTab === "conteudo" && <ContentEditor content={content} update={update} />}
       {activeTab === "equipe" && <TeamEditor content={content} update={update} />}
       {activeTab === "agenda" && <ScheduleEditor content={content} update={update} />}
+      {activeTab === "resultados" && <ScheduleEditor content={{ ...content, matches: content.results }} update={(key, value) => key === "matches" ? update("results", value as SiteContent["results"]) : update(key, value)} />}
       {activeTab === "noticias" && <NewsEditor content={content} update={update} />}
+      {activeTab === "ao-vivo" && <StreamEditor content={content} update={update} />}
+      {activeTab === "parceiros" && <PartnerEditor content={content} update={update} />}
     </section>
   </main>;
 }
@@ -59,4 +65,14 @@ function ScheduleEditor({ content, update }: { content: SiteContent; update: <K 
 function NewsEditor({ content, update }: { content: SiteContent; update: <K extends keyof SiteContent>(key: K, value: SiteContent[K]) => void }) {
   const news = content.news;
   return <div className="master-list">{news.map((item, index) => <div className="master-card news-edit-card" key={`${item.title}-${index}`}><div className="master-card-number">0{index + 1}</div><div className="field-grid compact"><Field label="Título" value={item.title} onChange={(value) => { const next = [...news]; next[index] = { ...item, title: value }; update("news", next); }} /><Field label="Categoria" value={item.category} onChange={(value) => { const next = [...news]; next[index] = { ...item, category: value }; update("news", next); }} /><Field label="Data" value={item.date} onChange={(value) => { const next = [...news]; next[index] = { ...item, date: value }; update("news", next); }} /><Field label="Resumo" value={item.excerpt} onChange={(value) => { const next = [...news]; next[index] = { ...item, excerpt: value }; update("news", next); }} textarea /></div></div>)}<button className="master-add" onClick={() => update("news", [...news, { title: "Nova notícia", category: "GERAL", date: "05 SET 2026", excerpt: "Escreva aqui o resumo da notícia.", featured: false }])}>+ Adicionar notícia</button></div>;
+}
+
+function StreamEditor({ content, update }: { content: SiteContent; update: <K extends keyof SiteContent>(key: K, value: SiteContent[K]) => void }) {
+  const streams = content.streams;
+  return <div className="master-list">{streams.map((stream, index) => <div className="master-card" key={`${stream.title}-${index}`}><div className="master-card-number">0{index + 1}</div><div className="field-grid compact"><Field label="Título" value={stream.title} onChange={(value) => { const next = [...streams]; next[index] = { ...stream, title: value }; update("streams", next); }} /><Field label="Plataforma" value={stream.platform} onChange={(value) => { const next = [...streams]; next[index] = { ...stream, platform: value }; update("streams", next); }} /><Field label="Data e horário" value={stream.date} onChange={(value) => { const next = [...streams]; next[index] = { ...stream, date: value }; update("streams", next); }} /><Field label="URL do canal" value={stream.url} onChange={(value) => { const next = [...streams]; next[index] = { ...stream, url: value }; update("streams", next); }} /></div></div>)}<button className="master-add" onClick={() => update("streams", [...streams, { title: "Nova transmissão", platform: "Twitch", date: "A definir", url: "https://twitch.tv/", live: false }])}>+ Adicionar transmissão</button></div>;
+}
+
+function PartnerEditor({ content, update }: { content: SiteContent; update: <K extends keyof SiteContent>(key: K, value: SiteContent[K]) => void }) {
+  const partners = content.partners;
+  return <div className="master-list">{partners.map((partner, index) => <div className="master-card" key={`${partner.name}-${index}`}><div className="master-card-number">0{index + 1}</div><div className="field-grid compact"><Field label="Nome" value={partner.name} onChange={(value) => { const next = [...partners]; next[index] = { ...partner, name: value }; update("partners", next); }} /><Field label="Categoria" value={partner.tier} onChange={(value) => { const next = [...partners]; next[index] = { ...partner, tier: value }; update("partners", next); }} /><Field label="Descrição" value={partner.description} onChange={(value) => { const next = [...partners]; next[index] = { ...partner, description: value }; update("partners", next); }} textarea /></div></div>)}<button className="master-add" onClick={() => update("partners", [...partners, { name: "NOVO PARCEIRO", tier: "APOIO OFICIAL", description: "Descreva a parceria." }])}>+ Adicionar parceiro</button></div>;
 }

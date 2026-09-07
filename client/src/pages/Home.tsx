@@ -34,6 +34,7 @@ export default function Home() {
           <a href="#lineup" onClick={() => setMenuOpen(false)}>Line-up</a>
           <a href="#agenda" onClick={() => setMenuOpen(false)}>Agenda</a>
           <a href="#noticias" onClick={() => setMenuOpen(false)}>Notícias</a>
+          <a href="#transmissoes" onClick={() => setMenuOpen(false)}>Ao vivo</a>
           <a href="#comunidade" onClick={() => setMenuOpen(false)}>Comunidade</a>
           <a className="mobile-discord" href={discordUrl} target="_blank" rel="noreferrer">Entrar no Discord <ArrowUpRight size={15} /></a>
         </div>
@@ -80,7 +81,7 @@ export default function Home() {
         <div className="players-grid">
           {content.players.map((player, index) => <article className="player-card" key={`${player.tag}-${index}`} style={{ "--accent": player.accent } as React.CSSProperties}>
             <div className={`player-photo photo-${index + 1}`}><div className="photo-number">{player.number}</div><div className="photo-glow" /></div>
-            <div className="player-info"><div><span className="player-role">{player.role}</span><h3>{player.tag}</h3></div><ArrowUpRight size={18} /></div>
+            <div className="player-info"><div><span className="player-role">{player.role}</span><h3>{player.tag}</h3><small>{player.realName} · {player.social}</small></div><ArrowUpRight size={18} /></div>
           </article>)}
         </div>
       </section>
@@ -90,12 +91,17 @@ export default function Home() {
         <div className="matches-list">
           {content.matches.map((match, index) => <div className="match-row" key={`${match.date}-${match.opponent}-${index}`}><div className="match-date"><strong>{match.date}</strong><span>{match.month}</span></div><div className="match-game"><span>{match.game}</span><strong>MSEC TEAM <i>vs</i> {match.opponent}</strong></div><div className="match-status"><span>{match.status}</span><strong>{match.score}</strong></div><div className="match-arrow"><ArrowUpRight size={18} /></div></div>)}
         </div>
+        <div className="results-block"><div className="results-label">ÚLTIMOS RESULTADOS</div>{content.results.map((result, index) => <div className="result-row" key={`${result.date}-${result.opponent}-${index}`}><span className="result-date">{result.date} {result.month}</span><span className="result-game">{result.game}</span><strong>{result.opponent}</strong><span className={result.status === "VITÓRIA" ? "result-win" : "result-loss"}>{result.status}</span><b>{result.score}</b></div>)}</div>
       </section>
 
       <section id="noticias" className="news section-pad">
         <div className="section-heading"><div><div className="section-kicker">04 / NOTÍCIAS</div><h2>Do front<br /><span>da matilha.</span></h2></div><a className="text-link" href="/master">Editar notícias <ArrowUpRight size={16} /></a></div>
         <div className="news-grid">{content.news.map((item, index) => <article className={item.featured ? "news-card news-card-featured" : "news-card"} key={`${item.title}-${index}`}><div className="news-art"><span>{item.category}</span><strong>0{index + 1}</strong></div><div className="news-meta"><span>{item.date}</span><ArrowUpRight size={16} /></div><h3>{item.title}</h3><p>{item.excerpt}</p></article>)}</div>
       </section>
+
+      <section id="transmissoes" className="streams section-pad"><div className="section-heading"><div><div className="section-kicker">05 / AO VIVO</div><h2>Assista a<br /><span>matilha.</span></h2></div><a className="text-link" href={content.streams[0]?.url || "#"} target="_blank" rel="noreferrer"><Play size={15} /> Abrir canal <ArrowUpRight size={16} /></a></div><div className="streams-grid">{content.streams.map((stream, index) => <a className="stream-card" href={stream.url} target="_blank" rel="noreferrer" key={`${stream.title}-${index}`}><div className="stream-art"><img src={logoUrl} alt="" /><span className={stream.live ? "stream-live" : "stream-upcoming"}>{stream.live ? "AO VIVO AGORA" : "PRÓXIMA TRANSMISSÃO"}</span></div><div className="stream-info"><span>{stream.platform} · {stream.date}</span><h3>{stream.title}</h3><ArrowUpRight size={18} /></div></a>)}</div></section>
+
+      <section id="parceiros" className="partners section-pad"><div className="section-heading"><div><div className="section-kicker">06 / PARCEIROS</div><h2>Do nosso<br /><span>lado.</span></h2></div><a className="text-link" href="mailto:parcerias@msecteam.gg">Quero apoiar <ArrowUpRight size={16} /></a></div><div className="partners-grid">{content.partners.map((partner, index) => <article className="partner-card" key={`${partner.name}-${index}`}><img src={logoUrl} alt="" /><span>{partner.tier}</span><h3>{partner.name}</h3><p>{partner.description}</p></article>)}</div></section>
 
       <section id="comunidade" className="community section-pad">
         <div className="community-panel">
