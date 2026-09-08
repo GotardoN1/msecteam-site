@@ -81,7 +81,7 @@ export default function Home() {
         <div className="section-heading"><div><div className="section-kicker">02 / ROSTER</div><h2>A matilha<br /><span>em campo.</span></h2></div><a className="text-link" href={instagramUrl} target="_blank" rel="noreferrer">Ver todos <ArrowUpRight size={16} /></a></div>
         <div className="players-grid">
           {content.players.map((player, index) => <article className="player-card" key={`${player.tag}-${index}`} style={{ "--accent": player.accent } as React.CSSProperties}>
-            <div className={`player-photo photo-${index + 1}`}><div className="photo-number">{player.number}</div><div className="photo-glow" /></div>
+            <div className={`player-photo photo-${index + 1}`} style={player.image ? { backgroundImage: `url(${player.image})` } : undefined}><div className="photo-number">{player.number}</div><div className="photo-glow" /></div>
             <div className="player-info"><div><span className="player-role">{player.role}</span><h3>{player.tag}</h3><small>{player.realName} · {player.social}</small></div><ArrowUpRight size={18} /></div>
           </article>)}
         </div>
@@ -97,7 +97,7 @@ export default function Home() {
 
       <section id="noticias" className="news section-pad">
         <div className="section-heading"><div><div className="section-kicker">04 / NOTÍCIAS</div><h2>Do front<br /><span>da matilha.</span></h2></div><a className="text-link" href="/master">Editar notícias <ArrowUpRight size={16} /></a></div>
-        <div className="news-grid">{content.news.map((item, index) => <article className={item.featured ? "news-card news-card-featured" : "news-card"} key={`${item.title}-${index}`}><div className="news-art"><span>{item.category}</span><strong>0{index + 1}</strong></div><div className="news-meta"><span>{item.date}</span><ArrowUpRight size={16} /></div><h3>{item.title}</h3><p>{item.excerpt}</p></article>)}</div>
+        <div className="news-grid">{content.news.map((item, index) => <article className={item.featured ? "news-card news-card-featured" : "news-card"} key={`${item.title}-${index}`}><div className="news-art" style={item.image ? { backgroundImage: `linear-gradient(180deg, rgba(9,12,9,.08), rgba(9,12,9,.78)), url(${item.image})` } : undefined}><span>{item.category}</span><strong>0{index + 1}</strong></div><div className="news-meta"><span>{item.date}</span><ArrowUpRight size={16} /></div><h3>{item.title}</h3><p>{item.excerpt}</p></article>)}</div>
       </section>
 
       <section id="transmissoes" className="streams section-pad"><div className="section-heading"><div><div className="section-kicker">05 / AO VIVO</div><h2>Assista a<br /><span>matilha.</span></h2></div><a className="text-link" href={content.streams[0]?.url || "#"} target="_blank" rel="noreferrer"><Play size={15} /> Abrir canal <ArrowUpRight size={16} /></a></div><div className="streams-grid">{content.streams.map((stream, index) => <a className="stream-card" href={stream.url} target="_blank" rel="noreferrer" key={`${stream.title}-${index}`}><div className="stream-art"><img src={logoUrl} alt="" /><span className={stream.live ? "stream-live" : "stream-upcoming"}>{stream.live ? "AO VIVO AGORA" : "PRÓXIMA TRANSMISSÃO"}</span></div><div className="stream-info"><span>{stream.platform} · {stream.date}</span><h3>{stream.title}</h3><ArrowUpRight size={18} /></div></a>)}</div></section>
