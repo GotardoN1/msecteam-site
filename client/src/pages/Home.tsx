@@ -46,7 +46,7 @@ export default function Home() {
         <div className="hero-image" />
         <div className="hero-grid" />
         <div className="hero-content">
-          <p className="eyebrow"><span className="live-dot" /> ORGANIZAÇÃO BRASILEIRA DE ESPORTS</p>
+          <p className="eyebrow"><span className="live-dot" /> MSEC / ME SINTO EM CASA / ESPORTS</p>
           <h1>{content.heroTitle}<br /><span>{content.heroAccent}</span></h1>
           <p className="hero-copy">{content.heroCopy}</p>
           <div className="hero-actions">
@@ -65,6 +65,7 @@ export default function Home() {
           <div className="manifesto-copy">
             <p className="lead">{content.manifestoLead}</p>
             <p>{content.manifestoBody}</p>
+            <div className="identity-note"><img src={logoUrl} alt="" /><span><strong>MSEC</strong> significa <em>Me Sinto em Casa</em>.<br />Aqui, todo mundo joga junto.</span></div>
             <a className="text-link" href={discordUrl} target="_blank" rel="noreferrer">Faça parte da matilha <ArrowUpRight size={16} /></a>
           </div>
         </div>

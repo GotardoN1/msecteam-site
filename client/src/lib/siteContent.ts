@@ -47,7 +47,7 @@ export const defaultSiteContent: SiteContent = {
   partners: [
     { name: "SUA MARCA", tier: "PARCEIRO PRINCIPAL", description: "Posicione sua marca ao lado da nova geração da MSEC TEAM." },
     { name: "MSEC COMMUNITY", tier: "APOIO OFICIAL", description: "Projetos, eventos e ativações que movimentam a nossa comunidade." },
-    { name: "ME SENTO EM CASA", tier: "ORIGEM", description: "Uma matilha brasileira, feita por quem joga junto." },
+    { name: "ME SINTO EM CASA", tier: "ORIGEM", description: "Uma matilha brasileira, feita por quem joga junto." },
   ],
 };
 

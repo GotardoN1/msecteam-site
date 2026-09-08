@@ -27,7 +27,7 @@ export default function Master() {
     <aside className="master-sidebar">
       <Link href="/" className="master-back"><ArrowLeft size={15} /> Voltar ao site</Link>
       <div className="master-brand"><img src="/manus-storage/pasted_file_3ZhlSm_image_9d5c5ac6.png" alt="MSEC — Me Sinto em Casa Esports" /><span>MSEC</span><em>MASTER</em></div>
-      <p className="master-intro">Painel de conteúdo<br />da matilha.</p>
+      <p className="master-intro"><strong>Me Sinto em Casa.</strong><br />Painel de conteúdo<br />da matilha.</p>
       <nav className="master-tabs">{tabs.map((tab) => { const Icon = tab.icon; return <button className={activeTab === tab.id ? "master-tab active" : "master-tab"} key={tab.id} onClick={() => setActiveTab(tab.id)}><Icon size={16} /> {tab.label}</button>; })}</nav>
       <div className="master-note">As alterações são salvas neste navegador e aparecem na home imediatamente.</div>
     </aside>
