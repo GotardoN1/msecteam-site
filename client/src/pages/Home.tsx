@@ -30,7 +30,7 @@ export default function Home() {
           <span>MSEC <em>TEAM</em></span>
         </a>
         <div className={menuOpen ? "nav-links nav-links-open" : "nav-links"}>
-          <a href="#sobre" onClick={() => setMenuOpen(false)}>Sobre</a>
+          <a href="/story" onClick={() => setMenuOpen(false)}>Nossa história</a>
           <a href="#lineup" onClick={() => setMenuOpen(false)}>Line-up</a>
           <a href="#agenda" onClick={() => setMenuOpen(false)}>Agenda</a>
           <a href="#noticias" onClick={() => setMenuOpen(false)}>Notícias</a>
@@ -50,7 +50,8 @@ export default function Home() {
           <h1>{content.heroTitle}<br /><span>{content.heroAccent}</span></h1>
           <p className="hero-copy">{content.heroCopy}</p>
           <div className="hero-actions">
-            <a className="button button-primary" href="#lineup">Conheça a matilha <ChevronRight size={17} /></a>
+          <a className="button button-primary" href="#lineup">Conheça a matilha <ChevronRight size={17} /></a>
+          <a className="button button-ghost" href="/tryout">Faça parte da matilha <ArrowUpRight size={17} /></a>
             <a className="button button-ghost" href={instagramUrl} target="_blank" rel="noreferrer"><Instagram size={17} /> Ver no Instagram</a>
           </div>
         </div>

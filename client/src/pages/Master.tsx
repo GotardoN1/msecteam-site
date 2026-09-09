@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Check, ClipboardList, FileText, Play, RotateCcw, Save, Users } from "lucide-react";
+import { ArrowLeft, Check, ClipboardList, Download, FileText, LockKeyhole, LogOut, Play, RotateCcw, Save, Upload, Users } from "lucide-react";
 import { Link } from "wouter";
 import { defaultSiteContent, loadSiteContent, resetSiteContent, saveSiteContent, type SiteContent } from "@/lib/siteContent";
 
@@ -13,7 +13,30 @@ const tabs = [
   { id: "parceiros", label: "Parceiros", icon: Users },
 ];
 
+const MASTER_KEY = "msec-master-password";
+
 export default function Master() {
+  const [authenticated, setAuthenticated] = useState(() => sessionStorage.getItem(MASTER_KEY) === "ok");
+  const [password, setPassword] = useState("");
+  const [configured, setConfigured] = useState(() => Boolean(localStorage.getItem(MASTER_KEY + "-configured")));
+  const [error, setError] = useState("");
+
+  const enter = () => {
+    if (!configured) {
+      if (password.length < 6) return setError("Use pelo menos 6 caracteres.");
+      localStorage.setItem(MASTER_KEY + "-configured", "true");
+      localStorage.setItem(MASTER_KEY, password);
+      sessionStorage.setItem(MASTER_KEY, "ok");
+      setConfigured(true); setAuthenticated(true); setPassword(""); return;
+    }
+    if (password === localStorage.getItem(MASTER_KEY)) { sessionStorage.setItem(MASTER_KEY, "ok"); setAuthenticated(true); setError(""); setPassword(""); }
+    else setError("Senha incorreta.");
+  };
+  if (!authenticated) return <section className="master-gate"><div className="master-gate-card"><LockKeyhole size={28} /><span className="master-kicker">MSEC TEAM / MASTER</span><h1>{configured ? "Área reservada." : "Crie sua senha."}</h1><p>{configured ? "Digite a senha local para editar o conteúdo da matilha." : "Esta proteção é local ao navegador. Para proteger entre dispositivos, conecte um backend de autenticação."}</p><input type="password" value={password} onChange={(event) => setPassword(event.target.value)} onKeyDown={(event) => event.key === "Enter" && enter()} placeholder="Senha do Master" autoFocus /><button className="master-save" onClick={enter}>{configured ? "Entrar no Master" : "Criar senha e entrar"}</button>{error && <small className="gate-error">{error}</small>}<Link href="/" className="master-back"><ArrowLeft size={15} /> Voltar ao site</Link></div></section>;
+  return <MasterEditor onLogout={() => { sessionStorage.removeItem(MASTER_KEY); setAuthenticated(false); }} />;
+}
+
+function MasterEditor({ onLogout }: { onLogout: () => void }) {
   const [content, setContent] = useState<SiteContent>(defaultSiteContent);
   const [activeTab, setActiveTab] = useState("conteudo");
   const [saved, setSaved] = useState(false);
@@ -22,6 +45,8 @@ export default function Master() {
   const update = <K extends keyof SiteContent>(key: K, value: SiteContent[K]) => setContent((current) => ({ ...current, [key]: value }));
   const save = () => { saveSiteContent(content); setSaved(true); window.setTimeout(() => setSaved(false), 2200); };
   const reset = () => { if (window.confirm("Restaurar todos os conteúdos originais?")) { resetSiteContent(); setContent(defaultSiteContent); } };
+  const exportContent = () => { const blob = new Blob([JSON.stringify(content, null, 2)], { type: "application/json" }); const url = URL.createObjectURL(blob); const anchor = document.createElement("a"); anchor.href = url; anchor.download = "msec-conteudo.json"; anchor.click(); URL.revokeObjectURL(url); };
+  const importContent = (event: React.ChangeEvent<HTMLInputElement>) => { const file = event.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => { try { const imported = JSON.parse(String(reader.result)) as SiteContent; setContent({ ...defaultSiteContent, ...imported }); setSaved(false); } catch { window.alert("Arquivo inválido. Exporte um JSON pelo próprio Master."); } }; reader.readAsText(file); event.target.value = ""; };
 
   return <main className="master-shell">
     <aside className="master-sidebar">
@@ -32,7 +57,7 @@ export default function Master() {
       <div className="master-note">As alterações são salvas neste navegador e aparecem na home imediatamente.</div>
     </aside>
     <section className="master-main">
-      <header className="master-header"><div><span className="master-kicker">MSEC TEAM / MASTER</span><h1>{tabs.find((tab) => tab.id === activeTab)?.label}</h1></div><div className="master-actions"><button className="master-reset" onClick={reset}><RotateCcw size={14} /> Restaurar</button><button className="master-save" onClick={save}>{saved ? <Check size={15} /> : <Save size={15} />} {saved ? "Salvo" : "Salvar alterações"}</button></div></header>
+      <header className="master-header"><div><span className="master-kicker">MSEC TEAM / MASTER</span><h1>{tabs.find((tab) => tab.id === activeTab)?.label}</h1></div><div className="master-actions"><button className="master-reset" onClick={reset}><RotateCcw size={14} /> Restaurar</button><button className="master-reset" onClick={exportContent}><Download size={14} /> Exportar</button><label className="master-reset file-import"><Upload size={14} /> Importar<input type="file" accept="application/json,.json" onChange={importContent} /></label><button className="master-save" onClick={save}>{saved ? <Check size={15} /> : <Save size={15} />} {saved ? "Salvo" : "Salvar alterações"}</button><button className="master-reset" onClick={onLogout}><LogOut size={14} /> Sair</button></div></header>
       {activeTab === "conteudo" && <ContentEditor content={content} update={update} />}
       {activeTab === "equipe" && <TeamEditor content={content} update={update} />}
       {activeTab === "agenda" && <ScheduleEditor content={content} update={update} />}
