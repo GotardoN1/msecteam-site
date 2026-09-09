@@ -13,6 +13,7 @@ function WolfMark({ small = false }: { small?: boolean }) {
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [selectedPlayer, setSelectedPlayer] = useState<number | null>(null);
   const content = useSiteContent();
 
   useEffect(() => {
@@ -81,7 +82,7 @@ export default function Home() {
       <section id="lineup" className="lineup section-pad">
         <div className="section-heading"><div><div className="section-kicker">02 / ROSTER</div><h2>A matilha<br /><span>em campo.</span></h2></div><a className="text-link" href={instagramUrl} target="_blank" rel="noreferrer">Ver todos <ArrowUpRight size={16} /></a></div>
         <div className="players-grid">
-          {content.players.map((player, index) => <article className="player-card" key={`${player.tag}-${index}`} style={{ "--accent": player.accent } as React.CSSProperties}>
+          {content.players.map((player, index) => <article className="player-card" key={`${player.tag}-${index}`} style={{ "--accent": player.accent } as React.CSSProperties} onClick={() => setSelectedPlayer(index)} role="button" tabIndex={0} onKeyDown={(event) => event.key === "Enter" && setSelectedPlayer(index)}>
             <div className={`player-photo photo-${index + 1}`} style={player.image ? { backgroundImage: `url(${player.image})` } : undefined}><div className="photo-number">{player.number}</div><div className="photo-glow" /></div>
             <div className="player-info"><div><span className="player-role">{player.role}</span><h3>{player.tag}</h3><small>{player.realName} · {player.social}</small></div><ArrowUpRight size={18} /></div>
           </article>)}
@@ -113,6 +114,7 @@ export default function Home() {
       </section>
 
       <footer className="footer"><div className="brand footer-brand"><WolfMark small /><span>MSEC <em>TEAM</em></span></div><p>© 2026 MSEC TEAM. Feito no Brasil, jogado em qualquer lugar.</p><div className="footer-links"><a href={instagramUrl} target="_blank" rel="noreferrer"><Instagram size={16} /> Instagram</a><a href={discordUrl} target="_blank" rel="noreferrer"><Disc3 size={16} /> Discord</a><a href="/master"><span className="footer-master-dot" /> Área Master</a></div></footer>
+      {selectedPlayer !== null && content.players[selectedPlayer] && <div className="player-modal" role="dialog" aria-modal="true" onClick={() => setSelectedPlayer(null)}><div className="player-modal-card" onClick={(event) => event.stopPropagation()}><button className="player-modal-close" onClick={() => setSelectedPlayer(null)} aria-label="Fechar"><X size={18} /></button><div className="player-modal-photo" style={{ backgroundImage: `url(${content.players[selectedPlayer].image || ""})` }} /><div className="player-modal-copy"><span className="player-role">{content.players[selectedPlayer].role}</span><h2>{content.players[selectedPlayer].tag}</h2><p>{content.players[selectedPlayer].realName} · {content.players[selectedPlayer].social}</p><a className="text-link" href={instagramUrl} target="_blank" rel="noreferrer">Ver perfil da matilha <ArrowUpRight size={16} /></a></div></div></div>}
     </main>
   );
 }

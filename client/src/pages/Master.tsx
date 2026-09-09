@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Check, ClipboardList, Download, FileText, LockKeyhole, LogOut, Play, RotateCcw, Save, Upload, Users } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Check, ClipboardList, Download, FileText, LockKeyhole, LogOut, Play, RotateCcw, Save, Upload, Users } from "lucide-react";
 import { Link } from "wouter";
-import { defaultSiteContent, loadSiteContent, resetSiteContent, saveSiteContent, type SiteContent } from "@/lib/siteContent";
+import { defaultSiteContent, deleteApplication, loadApplications, loadSiteContent, resetSiteContent, saveSiteContent, type Application, type SiteContent } from "@/lib/siteContent";
 
 const tabs = [
   { id: "conteudo", label: "Conteúdo", icon: FileText },
@@ -11,6 +11,7 @@ const tabs = [
   { id: "noticias", label: "Notícias", icon: FileText },
   { id: "ao-vivo", label: "Ao vivo", icon: Play },
   { id: "parceiros", label: "Parceiros", icon: Users },
+  { id: "candidaturas", label: "Candidaturas", icon: ClipboardList },
 ];
 
 const MASTER_KEY = "msec-master-password";
@@ -40,8 +41,9 @@ function MasterEditor({ onLogout }: { onLogout: () => void }) {
   const [content, setContent] = useState<SiteContent>(defaultSiteContent);
   const [activeTab, setActiveTab] = useState("conteudo");
   const [saved, setSaved] = useState(false);
+  const [applications, setApplications] = useState<Application[]>([]);
 
-  useEffect(() => setContent(loadSiteContent()), []);
+  useEffect(() => { setContent(loadSiteContent()); setApplications(loadApplications()); }, []);
   const update = <K extends keyof SiteContent>(key: K, value: SiteContent[K]) => setContent((current) => ({ ...current, [key]: value }));
   const save = () => { saveSiteContent(content); setSaved(true); window.setTimeout(() => setSaved(false), 2200); };
   const reset = () => { if (window.confirm("Restaurar todos os conteúdos originais?")) { resetSiteContent(); setContent(defaultSiteContent); } };
@@ -65,8 +67,14 @@ function MasterEditor({ onLogout }: { onLogout: () => void }) {
       {activeTab === "noticias" && <NewsEditor content={content} update={update} />}
       {activeTab === "ao-vivo" && <StreamEditor content={content} update={update} />}
       {activeTab === "parceiros" && <PartnerEditor content={content} update={update} />}
+      {activeTab === "candidaturas" && <ApplicationsEditor applications={applications} onDelete={(id) => setApplications(deleteApplication(id))} />}
     </section>
   </main>;
+}
+
+function ApplicationsEditor({ applications, onDelete }: { applications: Application[]; onDelete: (id: string) => void }) {
+  if (!applications.length) return <div className="master-empty"><ClipboardList size={28} /><h2>Nenhuma ficha ainda.</h2><p>As candidaturas enviadas pela página de peneira aparecem aqui neste navegador.</p><Link className="master-add" href="/tryout">Abrir página de peneira <ArrowUpRight size={14} /></Link></div>;
+  return <div className="applications-list">{applications.map((application) => <article className="application-card" key={application.id}><div className="application-top"><div><span className="master-kicker">{application.game} · {application.role}</span><h2>{application.nickname} <small>/{application.name}</small></h2></div><span className="application-date">{new Date(application.submittedAt).toLocaleDateString("pt-BR")}</span></div><div className="application-details"><span><b>IDADE</b>{application.age}</span><span><b>LOCAL</b>{application.location}</span><span><b>PERFIL</b>{application.profile || "Não informado"}</span></div><button className="master-reset" onClick={() => onDelete(application.id)}>Arquivar ficha</button></article>)}</div>;
 }
 
 function Field({ label, value, onChange, textarea = false }: { label: string; value: string; onChange: (value: string) => void; textarea?: boolean }) {
