@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowUpRight, Check, ClipboardList, Download, FileText, LockKeyhole, LogOut, Play, RotateCcw, Save, Upload, Users } from "lucide-react";
 import { Link } from "wouter";
-import { defaultSiteContent, deleteApplication, loadApplications, loadSiteContent, resetSiteContent, saveSiteContent, type Application, type SiteContent } from "@/lib/siteContent";
+import { defaultSiteContent, deleteApplication, loadApplications, loadSiteContent, resetSiteContent, saveSiteContent, type Application, type ApplicationStatus, type SiteContent } from "@/lib/siteContent";
 
 const tabs = [
   { id: "conteudo", label: "Conteúdo", icon: FileText },
@@ -73,8 +73,16 @@ function MasterEditor({ onLogout }: { onLogout: () => void }) {
 }
 
 function ApplicationsEditor({ applications, onDelete }: { applications: Application[]; onDelete: (id: string) => void }) {
+  const [game, setGame] = useState("TODOS");
+  const [status, setStatus] = useState("TODOS");
+  const [query, setQuery] = useState("");
+  const [items, setItems] = useState(applications);
+  useEffect(() => setItems(applications), [applications]);
+  const updateStatus = (id: string, nextStatus: ApplicationStatus) => { const next = items.map((item) => item.id === id ? { ...item, status: nextStatus } : item); setItems(next); window.localStorage.setItem("msec-team-site-applications", JSON.stringify(next)); };
+  const filtered = items.filter((item) => (game === "TODOS" || item.game === game) && (status === "TODOS" || (item.status || "NOVO") === status) && `${item.nickname} ${item.name} ${item.role}`.toLowerCase().includes(query.toLowerCase()));
   if (!applications.length) return <div className="master-empty"><ClipboardList size={28} /><h2>Nenhuma ficha ainda.</h2><p>As candidaturas enviadas pela página de peneira aparecem aqui neste navegador.</p><Link className="master-add" href="/tryout">Abrir página de peneira <ArrowUpRight size={14} /></Link></div>;
-  return <div className="applications-list">{applications.map((application) => <article className="application-card" key={application.id}><div className="application-top"><div><span className="master-kicker">{application.game} · {application.role}</span><h2>{application.nickname} <small>/{application.name}</small></h2></div><span className="application-date">{new Date(application.submittedAt).toLocaleDateString("pt-BR")}</span></div><div className="application-details"><span><b>IDADE</b>{application.age}</span><span><b>LOCAL</b>{application.location}</span><span><b>PERFIL</b>{application.profile || "Não informado"}</span></div><button className="master-reset" onClick={() => onDelete(application.id)}>Arquivar ficha</button></article>)}</div>;
+  const games = Array.from(new Set(items.map((item) => item.game)));
+  return <div className="applications-wrap"><div className="application-filters"><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar candidato..." /><select value={game} onChange={(event) => setGame(event.target.value)}><option>TODOS</option>{games.map((item) => <option key={item}>{item}</option>)}</select><select value={status} onChange={(event) => setStatus(event.target.value)}><option>TODOS</option><option>NOVO</option><option>EM ANÁLISE</option><option>APROVADO</option><option>ARQUIVADO</option></select><span className="application-count">{filtered.length} de {items.length}</span></div><div className="applications-list">{filtered.map((application) => <article className="application-card" key={application.id}><div className="application-top"><div><span className="master-kicker">{application.game} · {application.role}</span><h2>{application.nickname} <small>/{application.name}</small></h2></div><span className="application-date">{new Date(application.submittedAt).toLocaleDateString("pt-BR")}</span></div><div className="application-details"><span><b>IDADE</b>{application.age}</span><span><b>LOCAL</b>{application.location}</span><span><b>PERFIL</b>{application.profile || "Não informado"}</span></div><div className="application-actions"><select value={application.status || "NOVO"} onChange={(event) => updateStatus(application.id, event.target.value as ApplicationStatus)}><option>NOVO</option><option>EM ANÁLISE</option><option>APROVADO</option><option>ARQUIVADO</option></select><button className="master-reset" onClick={() => onDelete(application.id)}>Excluir ficha</button></div></article>)}</div></div>;
 }
 
 function Field({ label, value, onChange, textarea = false }: { label: string; value: string; onChange: (value: string) => void; textarea?: boolean }) {

@@ -5,7 +5,8 @@ export type Match = { date: string; month: string; opponent: string; game: strin
 export type News = { title: string; category: string; date: string; excerpt: string; featured?: boolean; image?: string };
 export type Stream = { title: string; platform: string; date: string; url: string; live: boolean };
 export type Partner = { name: string; tier: string; description: string };
-export type Application = { id: string; submittedAt: string; name: string; nickname: string; age: string; location: string; game: string; role: string; profile: string };
+export type ApplicationStatus = "NOVO" | "EM ANÁLISE" | "APROVADO" | "ARQUIVADO";
+export type Application = { id: string; submittedAt: string; name: string; nickname: string; age: string; location: string; game: string; role: string; profile: string; status?: ApplicationStatus };
 
 export type SiteContent = {
   heroTitle: string; heroAccent: string; heroCopy: string;
@@ -57,7 +58,7 @@ const APPLICATIONS_KEY = "msec-team-site-applications";
 export function loadSiteContent(): SiteContent { if (typeof window === "undefined") return defaultSiteContent; try { const saved = window.localStorage.getItem(STORAGE_KEY); if (!saved) return defaultSiteContent; const parsed = JSON.parse(saved) as Partial<SiteContent>; return { ...defaultSiteContent, ...parsed, players: defaultSiteContent.players.map((fallback, index) => ({ ...fallback, ...(parsed.players?.[index] || {}) })), news: defaultSiteContent.news.map((fallback, index) => ({ ...fallback, ...(parsed.news?.[index] || {}) })) }; } catch { return defaultSiteContent; } }
 export function saveSiteContent(content: SiteContent) { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(content)); }
 export function resetSiteContent() { window.localStorage.removeItem(STORAGE_KEY); }
-export function loadApplications(): Application[] { if (typeof window === "undefined") return []; try { return JSON.parse(window.localStorage.getItem(APPLICATIONS_KEY) || "[]") as Application[]; } catch { return []; } }
-export function saveApplication(application: Application) { const next = [application, ...loadApplications()]; window.localStorage.setItem(APPLICATIONS_KEY, JSON.stringify(next)); return next; }
+export function loadApplications(): Application[] { if (typeof window === "undefined") return []; try { return (JSON.parse(window.localStorage.getItem(APPLICATIONS_KEY) || "[]") as Application[]).map((application) => ({ ...application, status: application.status || "NOVO" })); } catch { return []; } }
+export function saveApplication(application: Application) { const next = [{ ...application, status: application.status || "NOVO" }, ...loadApplications()]; window.localStorage.setItem(APPLICATIONS_KEY, JSON.stringify(next)); return next; }
 export function deleteApplication(id: string) { const next = loadApplications().filter((application) => application.id !== id); window.localStorage.setItem(APPLICATIONS_KEY, JSON.stringify(next)); return next; }
 export function useSiteContent() { const [content, setContent] = useState<SiteContent>(defaultSiteContent); useEffect(() => setContent(loadSiteContent()), []); return content; }
