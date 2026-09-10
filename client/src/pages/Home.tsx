@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowUpRight, ChevronRight, Disc3, Instagram, Menu, Play, Trophy, Users, X } from "lucide-react";
+import { ArrowUpRight, ChevronRight, Disc3, Instagram, Menu, Play, Search, Trophy, Users, X } from "lucide-react";
 import { useSiteContent } from "@/lib/siteContent";
 
 const discordUrl = "https://discord.gg/kFtu8GSTAe";
@@ -14,6 +14,8 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<number | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const content = useSiteContent();
 
   useEffect(() => {
@@ -22,6 +24,8 @@ export default function Home() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  useEffect(() => { const onKeyDown = (event: KeyboardEvent) => { if (event.key === "/" && document.activeElement?.tagName !== "INPUT") { event.preventDefault(); setSearchOpen(true); } if (event.key === "Escape") setSearchOpen(false); }; window.addEventListener("keydown", onKeyDown); return () => window.removeEventListener("keydown", onKeyDown); }, []);
+  const searchItems = [...content.players.map((player) => ({ label: player.tag, meta: `Jogador · ${player.role}`, href: "#lineup" })), ...content.news.map((news) => ({ label: news.title, meta: `Notícia · ${news.category}`, href: "#noticias" })), { label: "Agenda de confrontos", meta: "Seção · Calendário", href: "#agenda" }, { label: "Transmissões", meta: "Seção · Ao vivo", href: "#transmissoes" }, { label: "Comunidade", meta: "Seção · Discord", href: "#comunidade" }].filter((item) => `${item.label} ${item.meta}`.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 7);
 
   return (
     <main className="site-shell">
@@ -40,6 +44,7 @@ export default function Home() {
           <a className="mobile-discord" href={discordUrl} target="_blank" rel="noreferrer">Entrar no Discord <ArrowUpRight size={15} /></a>
         </div>
         <a className="nav-cta" href={discordUrl} target="_blank" rel="noreferrer">Entrar no Discord <ArrowUpRight size={15} /></a>
+        <button className="search-trigger" onClick={() => setSearchOpen(true)} aria-label="Buscar no site"><Search size={17} /><kbd>/</kbd></button>
         <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}>{menuOpen ? <X /> : <Menu />}</button>
       </nav>
 
@@ -115,6 +120,7 @@ export default function Home() {
 
       <footer className="footer"><div className="brand footer-brand"><WolfMark small /><span>MSEC <em>TEAM</em></span></div><p>© 2026 MSEC TEAM. Feito no Brasil, jogado em qualquer lugar.</p><div className="footer-links"><a href={instagramUrl} target="_blank" rel="noreferrer"><Instagram size={16} /> Instagram</a><a href={discordUrl} target="_blank" rel="noreferrer"><Disc3 size={16} /> Discord</a><a href="/master"><span className="footer-master-dot" /> Área Master</a></div></footer>
       {selectedPlayer !== null && content.players[selectedPlayer] && <div className="player-modal" role="dialog" aria-modal="true" onClick={() => setSelectedPlayer(null)}><div className="player-modal-card" onClick={(event) => event.stopPropagation()}><button className="player-modal-close" onClick={() => setSelectedPlayer(null)} aria-label="Fechar"><X size={18} /></button><div className="player-modal-photo" style={{ backgroundImage: `url(${content.players[selectedPlayer].image || ""})` }} /><div className="player-modal-copy"><span className="player-role">{content.players[selectedPlayer].role}</span><h2>{content.players[selectedPlayer].tag}</h2><p>{content.players[selectedPlayer].realName} · {content.players[selectedPlayer].social}</p><a className="text-link" href={instagramUrl} target="_blank" rel="noreferrer">Ver perfil da matilha <ArrowUpRight size={16} /></a></div></div></div>}
+      {searchOpen && <div className="search-overlay" role="dialog" aria-modal="true" onClick={() => setSearchOpen(false)}><div className="search-panel" onClick={(event) => event.stopPropagation()}><div className="search-head"><Search size={18} /><input autoFocus value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Buscar na MSEC..." /><button onClick={() => setSearchOpen(false)} aria-label="Fechar busca"><X size={18} /></button></div><div className="search-results">{searchItems.length ? searchItems.map((item) => <a href={item.href} key={`${item.meta}-${item.label}`} onClick={() => setSearchOpen(false)}><span>{item.label}</span><small>{item.meta}</small><ArrowUpRight size={15} /></a>) : <p>Nenhum resultado encontrado na matilha.</p>}</div><div className="search-foot"><span>ESC para fechar</span><span>Busca global MSEC</span></div></div></div>}
     </main>
   );
 }
