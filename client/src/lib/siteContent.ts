@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { assetPath } from "./paths";
 
 export type Player = { tag: string; role: string; number: string; accent: string; realName?: string; social?: string; image?: string };
 export type Match = { date: string; month: string; opponent: string; game: string; status: string; score: string };
@@ -20,12 +21,12 @@ export const defaultSiteContent: SiteContent = {
   manifestoTitle: "Sem pose.", manifestoAccent: "Só presença.", manifestoLead: "Não somos a organização mais séria da sala — e é exatamente por isso que você vai lembrar da gente.", manifestoBody: "Da resenha no Discord ao último round da partida, a MSEC existe para quem joga pelo jogo. Uma comunidade brasileira, competitiva quando precisa e caótica por natureza.",
   communityTitle: "Entra no", communityAccent: "canil.", communityBody: "Partidas, memes, calls duvidosas e aquela resenha que só quem é da matilha entende.",
   players: [
-    { tag: "ROBSON", role: "PLAYER", number: "01", accent: "#b9d79d", realName: "Robson", social: "@robson.barrxs", image: "/manus-storage/msec-player-robson_5b1d2b29.jpg" },
-    { tag: "KEVIN", role: "PLAYER", number: "02", accent: "#e6d9b7", realName: "Kevin", social: "@kevin", image: "/manus-storage/msec-player-kevin_fdf5ab53.jpg" },
-    { tag: "YURI", role: "PLAYER", number: "03", accent: "#90b67c", realName: "Yuri", social: "@yuri", image: "/manus-storage/msec-player-yuri_ed7d2909.jpg" },
-    { tag: "GOTARDO", role: "PLAYER", number: "04", accent: "#c8d6a8", realName: "Gotardo", social: "@gotardo", image: "/manus-storage/msec-player-gotardo_9c094d57.jpg" },
-    { tag: "NATAN", role: "PLAYER", number: "05", accent: "#d9cba8", realName: "Natan", social: "@natan", image: "/manus-storage/msec-player-natan_6f28ffbe.jpg" },
-    { tag: "T2T", role: "PLAYER", number: "06", accent: "#a8c68e", realName: "T2T", social: "@t2t", image: "/manus-storage/msec-player-t2t_306ecc69.jpg" },
+    { tag: "ROBSON", role: "PLAYER", number: "01", accent: "#b9d79d", realName: "Robson", social: "@robson.barrxs", image: assetPath("player-robson.jpg") },
+    { tag: "KEVIN", role: "PLAYER", number: "02", accent: "#e6d9b7", realName: "Kevin", social: "@kevin", image: assetPath("player-kevin.jpg") },
+    { tag: "YURI", role: "PLAYER", number: "03", accent: "#90b67c", realName: "Yuri", social: "@yuri", image: assetPath("player-yuri.jpg") },
+    { tag: "GOTARDO", role: "PLAYER", number: "04", accent: "#c8d6a8", realName: "Gotardo", social: "@gotardo", image: assetPath("player-gotardo.jpg") },
+    { tag: "NATAN", role: "PLAYER", number: "05", accent: "#d9cba8", realName: "Natan", social: "@natan", image: assetPath("player-natan.jpg") },
+    { tag: "T2T", role: "PLAYER", number: "06", accent: "#a8c68e", realName: "T2T", social: "@t2t", image: assetPath("player-t2t.jpg") },
   ],
   matches: [
     { date: "18", month: "SET", opponent: "Wolves United", game: "EA FC 26", status: "PRÓXIMO", score: "20:30" },
@@ -38,9 +39,9 @@ export const defaultSiteContent: SiteContent = {
     { date: "31", month: "AGO", opponent: "Fênix Club", game: "Rocket League", status: "VITÓRIA", score: "2 — 0" },
   ],
   news: [
-    { title: "A matilha está completa", category: "ROSTER", date: "05 SET 2026", excerpt: "Robson, Kevin, Yuri, Gotardo, Natan e T2T formam a nova linha de frente da MSEC TEAM.", featured: true, image: "/manus-storage/msec-news-roster_0d748b15.jpg" },
-    { title: "Bem-vindo ao canil", category: "COMUNIDADE", date: "01 SET 2026", excerpt: "Nosso Discord está aberto para quem joga sério — ou pelo menos tenta.", featured: false, image: "/manus-storage/msec-news-community_b24b455a.jpg" },
-    { title: "MSEC entra em campo", category: "COMPETIÇÃO", date: "28 AGO 2026", excerpt: "A temporada começa com novos desafios, novas calls e a mesma resenha.", featured: false, image: "/manus-storage/msec-news-competition_0d2b94e3.jpg" },
+    { title: "A matilha está completa", category: "ROSTER", date: "05 SET 2026", excerpt: "Robson, Kevin, Yuri, Gotardo, Natan e T2T formam a nova linha de frente da MSEC TEAM.", featured: true, image: assetPath("news-roster.jpg") },
+    { title: "Bem-vindo ao canil", category: "COMUNIDADE", date: "01 SET 2026", excerpt: "Nosso Discord está aberto para quem joga sério — ou pelo menos tenta.", featured: false, image: assetPath("news-community.jpg") },
+    { title: "MSEC entra em campo", category: "COMPETIÇÃO", date: "28 AGO 2026", excerpt: "A temporada começa com novos desafios, novas calls e a mesma resenha.", featured: false, image: assetPath("news-competition.jpg") },
   ],
   streams: [
     { title: "MSEC TEAM vs Wolves United", platform: "Twitch", date: "18 SET · 20:30", url: "https://twitch.tv/", live: false },

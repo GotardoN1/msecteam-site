@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { ArrowUpRight, CalendarPlus, Check, ChevronRight, Disc3, Instagram, Menu, Play, Search, X } from "lucide-react";
 import { useSiteContent } from "@/lib/siteContent";
+import { appPath, assetPath } from "@/lib/paths";
 
 const discordUrl = "https://discord.gg/kFtu8GSTAe";
 const instagramUrl = "https://www.instagram.com/msecteam/";
-const logoUrl = "/manus-storage/pasted_file_3ZhlSm_image_9d5c5ac6.png";
+const logoUrl = assetPath("msec-logo.png");
 const monthNumbers: Record<string, string> = { JAN: "01", FEV: "02", MAR: "03", ABR: "04", MAI: "05", JUN: "06", JUL: "07", AGO: "08", SET: "09", OUT: "10", NOV: "11", DEZ: "12" };
 function downloadMatchCalendar(match: { date: string; month: string; opponent: string; game: string }) { const month = monthNumbers[match.month] || "09"; const day = match.date.padStart(2, "0"); const ics = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//MSEC TEAM//PT\nBEGIN:VEVENT\nUID:msec-${day}${month}-${match.opponent.replace(/\s/g, "-")}@msecteam\nDTSTAMP:20260910T120000Z\nDTSTART:2026${month}${day}T203000\nSUMMARY:MSEC TEAM vs ${match.opponent}\nDESCRIPTION:${match.game} · MSEC TEAM\nEND:VEVENT\nEND:VCALENDAR`; const blob = new Blob([ics], { type: "text/calendar" }); const url = URL.createObjectURL(blob); const anchor = document.createElement("a"); anchor.href = url; anchor.download = `msec-${day}-${month}.ics`; anchor.click(); URL.revokeObjectURL(url); }
 
@@ -38,7 +39,7 @@ export default function Home() {
           <span>MSEC <em>TEAM</em></span>
         </a>
         <div className={menuOpen ? "nav-links nav-links-open" : "nav-links"}>
-          <a href="/story" onClick={() => setMenuOpen(false)}>Nossa história</a>
+          <a href={appPath("/story")} onClick={() => setMenuOpen(false)}>Nossa história</a>
           <a href="#lineup" onClick={() => setMenuOpen(false)}>Line-up</a>
           <a href="#agenda" onClick={() => setMenuOpen(false)}>Agenda</a>
           <a href="#noticias" onClick={() => setMenuOpen(false)}>Notícias</a>
@@ -52,7 +53,7 @@ export default function Home() {
       </nav>
 
       <section id="top" className="hero">
-        <div className="hero-image" />
+        <div className="hero-image" style={{ backgroundImage: `linear-gradient(90deg, #080a08 0%, rgba(8,10,8,.82) 34%, rgba(8,10,8,.12) 76%), url(${assetPath("msec-hero.jpg")})` }} />
         <div className="hero-grid" />
         <div className="hero-content">
           <p className="eyebrow"><span className="live-dot" /> MSEC / ME SINTO EM CASA / ESPORTS</p>
@@ -60,7 +61,7 @@ export default function Home() {
           <p className="hero-copy">{content.heroCopy}</p>
           <div className="hero-actions">
           <a className="button button-primary" href="#lineup">Conheça a matilha <ChevronRight size={17} /></a>
-          <a className="button button-ghost" href="/tryout">Faça parte da matilha <ArrowUpRight size={17} /></a>
+          <a className="button button-ghost" href={appPath("/tryout")}>Faça parte da matilha <ArrowUpRight size={17} /></a>
             <a className="button button-ghost" href={instagramUrl} target="_blank" rel="noreferrer"><Instagram size={17} /> Ver no Instagram</a>
           </div>
         </div>
@@ -106,7 +107,7 @@ export default function Home() {
       </section>
 
       <section id="noticias" className="news section-pad">
-        <div className="section-heading"><div><div className="section-kicker">04 / NOTÍCIAS</div><h2>Do front<br /><span>da matilha.</span></h2></div><a className="text-link" href="/master">Editar notícias <ArrowUpRight size={16} /></a></div>
+        <div className="section-heading"><div><div className="section-kicker">04 / NOTÍCIAS</div><h2>Do front<br /><span>da matilha.</span></h2></div><a className="text-link" href={appPath("/master")}>Editar notícias <ArrowUpRight size={16} /></a></div>
         <div className="news-grid">{content.news.map((item, index) => <article className={item.featured ? "news-card news-card-featured" : "news-card"} key={`${item.title}-${index}`}><div className="news-art" style={item.image ? { backgroundImage: `linear-gradient(180deg, rgba(9,12,9,.08), rgba(9,12,9,.78)), url(${item.image})` } : undefined}><span>{item.category}</span><strong>0{index + 1}</strong></div><div className="news-meta"><span>{item.date}</span><button className="share-news" aria-label={`Compartilhar ${item.title}`} onClick={async () => { const shareData = { title: item.title, text: item.excerpt, url: window.location.href + "#noticias" }; if (navigator.share) await navigator.share(shareData); else { await navigator.clipboard?.writeText(shareData.url); setSharedNews(item.title); window.setTimeout(() => setSharedNews(null), 1600); } }}>{sharedNews === item.title ? <Check size={15} /> : <ArrowUpRight size={16} />}</button></div><h3>{item.title}</h3><p>{item.excerpt}</p></article>)}</div>
       </section>
 
@@ -121,7 +122,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="footer"><div className="brand footer-brand"><WolfMark small /><span>MSEC <em>TEAM</em></span></div><p>© 2026 MSEC TEAM. Feito no Brasil, jogado em qualquer lugar.</p><div className="footer-links"><a href={instagramUrl} target="_blank" rel="noreferrer"><Instagram size={16} /> Instagram</a><a href={discordUrl} target="_blank" rel="noreferrer"><Disc3 size={16} /> Discord</a><a href="/master"><span className="footer-master-dot" /> Área Master</a></div></footer>
+      <footer className="footer"><div className="brand footer-brand"><WolfMark small /><span>MSEC <em>TEAM</em></span></div><p>© 2026 MSEC TEAM. Feito no Brasil, jogado em qualquer lugar.</p><div className="footer-links"><a href={instagramUrl} target="_blank" rel="noreferrer"><Instagram size={16} /> Instagram</a><a href={discordUrl} target="_blank" rel="noreferrer"><Disc3 size={16} /> Discord</a><a href={appPath("/master")}><span className="footer-master-dot" /> Área Master</a></div></footer>
       {selectedPlayer !== null && content.players[selectedPlayer] && <div className="player-modal" role="dialog" aria-modal="true" onClick={() => setSelectedPlayer(null)}><div className="player-modal-card" onClick={(event) => event.stopPropagation()}><button className="player-modal-close" onClick={() => setSelectedPlayer(null)} aria-label="Fechar"><X size={18} /></button><div className="player-modal-photo" style={{ backgroundImage: `url(${content.players[selectedPlayer].image || ""})` }} /><div className="player-modal-copy"><span className="player-role">{content.players[selectedPlayer].role}</span><h2>{content.players[selectedPlayer].tag}</h2><p>{content.players[selectedPlayer].realName} · {content.players[selectedPlayer].social}</p><a className="text-link" href={instagramUrl} target="_blank" rel="noreferrer">Ver perfil da matilha <ArrowUpRight size={16} /></a></div></div></div>}
       {searchOpen && <div className="search-overlay" role="dialog" aria-modal="true" onClick={() => setSearchOpen(false)}><div className="search-panel" onClick={(event) => event.stopPropagation()}><div className="search-head"><Search size={18} /><input autoFocus value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Buscar na MSEC..." /><button onClick={() => setSearchOpen(false)} aria-label="Fechar busca"><X size={18} /></button></div><div className="search-results">{searchItems.length ? searchItems.map((item) => <a href={item.href} key={`${item.meta}-${item.label}`} onClick={() => setSearchOpen(false)}><span>{item.label}</span><small>{item.meta}</small><ArrowUpRight size={15} /></a>) : <p>Nenhum resultado encontrado na matilha.</p>}</div><div className="search-foot"><span>ESC para fechar</span><span>Busca global MSEC</span></div></div></div>}
     </main>

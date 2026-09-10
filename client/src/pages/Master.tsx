@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowUpRight, Check, ClipboardList, Download, FileText, LockKeyhole, LogOut, Play, RotateCcw, Save, Upload, Users } from "lucide-react";
 import { Link } from "wouter";
 import { defaultSiteContent, deleteApplication, loadApplications, loadSiteContent, resetSiteContent, saveSiteContent, type Application, type ApplicationStatus, type SiteContent } from "@/lib/siteContent";
+import { appPath, assetPath } from "@/lib/paths";
 
 const tabs = [
   { id: "conteudo", label: "Conteúdo", icon: FileText },
@@ -33,7 +34,7 @@ export default function Master() {
     if (password === localStorage.getItem(MASTER_KEY)) { sessionStorage.setItem(MASTER_KEY, "ok"); setAuthenticated(true); setError(""); setPassword(""); }
     else setError("Senha incorreta.");
   };
-  if (!authenticated) return <section className="master-gate"><div className="master-gate-card"><LockKeyhole size={28} /><span className="master-kicker">MSEC TEAM / MASTER</span><h1>{configured ? "Área reservada." : "Crie sua senha."}</h1><p>{configured ? "Digite a senha local para editar o conteúdo da matilha." : "Esta proteção é local ao navegador. Para proteger entre dispositivos, conecte um backend de autenticação."}</p><input type="password" value={password} onChange={(event) => setPassword(event.target.value)} onKeyDown={(event) => event.key === "Enter" && enter()} placeholder="Senha do Master" autoFocus /><button className="master-save" onClick={enter}>{configured ? "Entrar no Master" : "Criar senha e entrar"}</button>{error && <small className="gate-error">{error}</small>}<Link href="/" className="master-back"><ArrowLeft size={15} /> Voltar ao site</Link></div></section>;
+  if (!authenticated) return <section className="master-gate"><div className="master-gate-card"><LockKeyhole size={28} /><span className="master-kicker">MSEC TEAM / MASTER</span><h1>{configured ? "Área reservada." : "Crie sua senha."}</h1><p>{configured ? "Digite a senha local para editar o conteúdo da matilha." : "Esta proteção é local ao navegador. Para proteger entre dispositivos, conecte um backend de autenticação."}</p><input type="password" value={password} onChange={(event) => setPassword(event.target.value)} onKeyDown={(event) => event.key === "Enter" && enter()} placeholder="Senha do Master" autoFocus /><button className="master-save" onClick={enter}>{configured ? "Entrar no Master" : "Criar senha e entrar"}</button>{error && <small className="gate-error">{error}</small>}<Link href={appPath("/")} className="master-back"><ArrowLeft size={15} /> Voltar ao site</Link></div></section>;
   return <MasterEditor onLogout={() => { sessionStorage.removeItem(MASTER_KEY); setAuthenticated(false); }} />;
 }
 
@@ -52,8 +53,8 @@ function MasterEditor({ onLogout }: { onLogout: () => void }) {
 
   return <main className="master-shell">
     <aside className="master-sidebar">
-      <Link href="/" className="master-back"><ArrowLeft size={15} /> Voltar ao site</Link>
-      <div className="master-brand"><img src="/manus-storage/pasted_file_3ZhlSm_image_9d5c5ac6.png" alt="MSEC — Me Sinto em Casa Esports" /><span>MSEC</span><em>MASTER</em></div>
+      <Link href={appPath("/")} className="master-back"><ArrowLeft size={15} /> Voltar ao site</Link>
+      <div className="master-brand"><img src={assetPath("msec-logo.png")} alt="MSEC — Me Sinto em Casa Esports" /><span>MSEC</span><em>MASTER</em></div>
       <p className="master-intro"><strong>Me Sinto em Casa.</strong><br />Painel de conteúdo<br />da matilha.</p>
       <nav className="master-tabs">{tabs.map((tab) => { const Icon = tab.icon; return <button className={activeTab === tab.id ? "master-tab active" : "master-tab"} key={tab.id} onClick={() => setActiveTab(tab.id)}><Icon size={16} /> {tab.label}</button>; })}</nav>
       <div className="master-note">As alterações são salvas neste navegador e aparecem na home imediatamente.</div>
@@ -80,7 +81,7 @@ function ApplicationsEditor({ applications, onDelete }: { applications: Applicat
   useEffect(() => setItems(applications), [applications]);
   const updateStatus = (id: string, nextStatus: ApplicationStatus) => { const next = items.map((item) => item.id === id ? { ...item, status: nextStatus } : item); setItems(next); window.localStorage.setItem("msec-team-site-applications", JSON.stringify(next)); };
   const filtered = items.filter((item) => (game === "TODOS" || item.game === game) && (status === "TODOS" || (item.status || "NOVO") === status) && `${item.nickname} ${item.name} ${item.role}`.toLowerCase().includes(query.toLowerCase()));
-  if (!applications.length) return <div className="master-empty"><ClipboardList size={28} /><h2>Nenhuma ficha ainda.</h2><p>As candidaturas enviadas pela página de peneira aparecem aqui neste navegador.</p><Link className="master-add" href="/tryout">Abrir página de peneira <ArrowUpRight size={14} /></Link></div>;
+  if (!applications.length) return <div className="master-empty"><ClipboardList size={28} /><h2>Nenhuma ficha ainda.</h2><p>As candidaturas enviadas pela página de peneira aparecem aqui neste navegador.</p><Link className="master-add" href={appPath("/tryout")}>Abrir página de peneira <ArrowUpRight size={14} /></Link></div>;
   const games = Array.from(new Set(items.map((item) => item.game)));
   return <div className="applications-wrap"><div className="application-filters"><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar candidato..." /><select value={game} onChange={(event) => setGame(event.target.value)}><option>TODOS</option>{games.map((item) => <option key={item}>{item}</option>)}</select><select value={status} onChange={(event) => setStatus(event.target.value)}><option>TODOS</option><option>NOVO</option><option>EM ANÁLISE</option><option>APROVADO</option><option>ARQUIVADO</option></select><span className="application-count">{filtered.length} de {items.length}</span></div><div className="applications-list">{filtered.map((application) => <article className="application-card" key={application.id}><div className="application-top"><div><span className="master-kicker">{application.game} · {application.role}</span><h2>{application.nickname} <small>/{application.name}</small></h2></div><span className="application-date">{new Date(application.submittedAt).toLocaleDateString("pt-BR")}</span></div><div className="application-details"><span><b>IDADE</b>{application.age}</span><span><b>LOCAL</b>{application.location}</span><span><b>PERFIL</b>{application.profile || "Não informado"}</span></div><div className="application-actions"><select value={application.status || "NOVO"} onChange={(event) => updateStatus(application.id, event.target.value as ApplicationStatus)}><option>NOVO</option><option>EM ANÁLISE</option><option>APROVADO</option><option>ARQUIVADO</option></select><button className="master-reset" onClick={() => onDelete(application.id)}>Excluir ficha</button></div></article>)}</div></div>;
 }
