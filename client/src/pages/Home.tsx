@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { ArrowUpRight, ChevronRight, Disc3, Instagram, Menu, Play, Search, Trophy, Users, X } from "lucide-react";
+import { ArrowUpRight, CalendarPlus, Check, ChevronRight, Disc3, Instagram, Menu, Play, Search, X } from "lucide-react";
 import { useSiteContent } from "@/lib/siteContent";
 
 const discordUrl = "https://discord.gg/kFtu8GSTAe";
 const instagramUrl = "https://www.instagram.com/msecteam/";
 const logoUrl = "/manus-storage/pasted_file_3ZhlSm_image_9d5c5ac6.png";
+const monthNumbers: Record<string, string> = { JAN: "01", FEV: "02", MAR: "03", ABR: "04", MAI: "05", JUN: "06", JUL: "07", AGO: "08", SET: "09", OUT: "10", NOV: "11", DEZ: "12" };
+function downloadMatchCalendar(match: { date: string; month: string; opponent: string; game: string }) { const month = monthNumbers[match.month] || "09"; const day = match.date.padStart(2, "0"); const ics = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//MSEC TEAM//PT\nBEGIN:VEVENT\nUID:msec-${day}${month}-${match.opponent.replace(/\s/g, "-")}@msecteam\nDTSTAMP:20260910T120000Z\nDTSTART:2026${month}${day}T203000\nSUMMARY:MSEC TEAM vs ${match.opponent}\nDESCRIPTION:${match.game} · MSEC TEAM\nEND:VEVENT\nEND:VCALENDAR`; const blob = new Blob([ics], { type: "text/calendar" }); const url = URL.createObjectURL(blob); const anchor = document.createElement("a"); anchor.href = url; anchor.download = `msec-${day}-${month}.ics`; anchor.click(); URL.revokeObjectURL(url); }
 
 function WolfMark({ small = false }: { small?: boolean }) {
   return <img className={small ? "official-logo official-logo-small" : "official-logo"} src={logoUrl} alt="MSEC — Me Sinto em Casa Esports" />;
@@ -16,6 +18,7 @@ export default function Home() {
   const [selectedPlayer, setSelectedPlayer] = useState<number | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sharedNews, setSharedNews] = useState<string | null>(null);
   const content = useSiteContent();
 
   useEffect(() => {
@@ -95,7 +98,7 @@ export default function Home() {
       </section>
 
       <section id="agenda" className="schedule section-pad">
-        <div className="section-heading"><div><div className="section-kicker">03 / CALENDÁRIO</div><h2>Próximos<br /><span>confrontos.</span></h2></div><div className="season-pill"><span className="live-dot" /> TEMPORADA 2026</div></div>
+        <div className="section-heading"><div><div className="section-kicker">03 / CALENDÁRIO</div><h2>Próximos<br /><span>confrontos.</span></h2></div><div className="heading-actions"><button className="season-pill calendar-button" onClick={() => content.matches[0] && downloadMatchCalendar(content.matches[0])}><CalendarPlus size={14} /> ADICIONAR AO CALENDÁRIO</button><div className="season-pill"><span className="live-dot" /> TEMPORADA 2026</div></div></div>
         <div className="matches-list">
           {content.matches.map((match, index) => <div className="match-row" key={`${match.date}-${match.opponent}-${index}`}><div className="match-date"><strong>{match.date}</strong><span>{match.month}</span></div><div className="match-game"><span>{match.game}</span><strong>MSEC TEAM <i>vs</i> {match.opponent}</strong></div><div className="match-status"><span>{match.status}</span><strong>{match.score}</strong></div><div className="match-arrow"><ArrowUpRight size={18} /></div></div>)}
         </div>
@@ -104,7 +107,7 @@ export default function Home() {
 
       <section id="noticias" className="news section-pad">
         <div className="section-heading"><div><div className="section-kicker">04 / NOTÍCIAS</div><h2>Do front<br /><span>da matilha.</span></h2></div><a className="text-link" href="/master">Editar notícias <ArrowUpRight size={16} /></a></div>
-        <div className="news-grid">{content.news.map((item, index) => <article className={item.featured ? "news-card news-card-featured" : "news-card"} key={`${item.title}-${index}`}><div className="news-art" style={item.image ? { backgroundImage: `linear-gradient(180deg, rgba(9,12,9,.08), rgba(9,12,9,.78)), url(${item.image})` } : undefined}><span>{item.category}</span><strong>0{index + 1}</strong></div><div className="news-meta"><span>{item.date}</span><ArrowUpRight size={16} /></div><h3>{item.title}</h3><p>{item.excerpt}</p></article>)}</div>
+        <div className="news-grid">{content.news.map((item, index) => <article className={item.featured ? "news-card news-card-featured" : "news-card"} key={`${item.title}-${index}`}><div className="news-art" style={item.image ? { backgroundImage: `linear-gradient(180deg, rgba(9,12,9,.08), rgba(9,12,9,.78)), url(${item.image})` } : undefined}><span>{item.category}</span><strong>0{index + 1}</strong></div><div className="news-meta"><span>{item.date}</span><button className="share-news" aria-label={`Compartilhar ${item.title}`} onClick={async () => { const shareData = { title: item.title, text: item.excerpt, url: window.location.href + "#noticias" }; if (navigator.share) await navigator.share(shareData); else { await navigator.clipboard?.writeText(shareData.url); setSharedNews(item.title); window.setTimeout(() => setSharedNews(null), 1600); } }}>{sharedNews === item.title ? <Check size={15} /> : <ArrowUpRight size={16} />}</button></div><h3>{item.title}</h3><p>{item.excerpt}</p></article>)}</div>
       </section>
 
       <section id="transmissoes" className="streams section-pad"><div className="section-heading"><div><div className="section-kicker">05 / AO VIVO</div><h2>Assista a<br /><span>matilha.</span></h2></div><a className="text-link" href={content.streams[0]?.url || "#"} target="_blank" rel="noreferrer"><Play size={15} /> Abrir canal <ArrowUpRight size={16} /></a></div><div className="streams-grid">{content.streams.map((stream, index) => <a className="stream-card" href={stream.url} target="_blank" rel="noreferrer" key={`${stream.title}-${index}`}><div className="stream-art"><img src={logoUrl} alt="" /><span className={stream.live ? "stream-live" : "stream-upcoming"}>{stream.live ? "AO VIVO AGORA" : "PRÓXIMA TRANSMISSÃO"}</span></div><div className="stream-info"><span>{stream.platform} · {stream.date}</span><h3>{stream.title}</h3><ArrowUpRight size={18} /></div></a>)}</div></section>
